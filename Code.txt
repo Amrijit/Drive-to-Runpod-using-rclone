@@ -1,0 +1,130 @@
+                            -------------------------- Option 1: Using gdown (simplest for small-medium files) ---------------------------------
+
+
+step1: Upload the folder/file to google drive and Click "Share" → "Anyone with the link"
+       Click "Copy link" and save it somewhere
+
+
+Step2: go to the runpod and open a terminal
+
+
+pip install gdown
+
+# Single file
+gdown "<your copied link>"
+
+# Entire folder
+gdown --folder "<your copied link>"
+
+
+ 
+                             ----------------------- Option 1: Using gdown (simplest for small-medium files) ----------------------------
+
+Step 1 — Install rclone: curl https://rclone.org/install.sh | sudo bash
+
+
+Step 2 — Configure rclone: rclone config
+
+
+Step3: Follow these exactly:
+
+n                    ← new remote
+name> gdrive
+Storage> drive       ← type "drive"
+client_id>           ← press Enter
+client_secret>       ← press Enter
+scope> 1             ← press 1 (full access)
+root_folder_id>      ← press Enter
+service_account_file> ← press Enter
+Edit advanced config? → n
+Use auto config? → n  ← IMPORTANT: choose n (no browser on RunPod)
+
+
+
+
+Step4: Now you will see "config_token>"  You need a token!
+
+Go to your local machine and then install rclone -
+
+Windows: winget install Rclone.Rclone
+Mac: brew install rclone
+Linux: curl https://rclone.org/install.sh | sudo bash
+
+
+Then restart your terminal and run:  rclone authorize "drive" "<your authorization code you got from step3>"
+
+You will see something like- rclone authorize "drive" "eyJzY29wZSI6ImRyaXZlIn0"
+
+
+
+Step5: Now you will see a big token in the local machine terminal. Copy that token and go back to runpod and paste it and enter.
+       config_token> <PASTE_THE_TOKEN_HERE>
+
+
+Step6: Then continue in Runpod:
+
+Configure this as a Shared Drive? → n
+y   ← confirm
+q   ← quit
+
+
+Step7: Now paste this code to runpod terminal: rclone copy "gdrive:/<your folder name in drive>" /workspace/ --progress --transfers=8
+
+
+Done!!!
+
+
+
+
+How to make it faster? 
+
+
+1. Increase Transfers & Checkers
+[code] rclone copy "gdrive:/<your folder name in drive>" /workspace/ --progress --transfers=32 --checkers=16
+
+
+2. Add Buffer Size & Chunk Size
+[code] rclone copy "gdrive:/<your folder name in drive>" /workspace/ --progress --transfers=32 --checkers=16 --buffer-size=256M --drive-chunk-size=256M
+
+
+3. Disable Integrity Checks (Faster but slightly risky)
+[code] rclone copy "gdrive:/<your folder name in drive>" /workspace/ --progress --transfers=32 --checkers=16 --buffer-size=256M --drive-chunk-size=256M --no-checksum
+
+
+
+# (All optimizations combined)
+
+rclone copy "gdrive:/<your folder name in drive>" /workspace/ \
+  --progress \
+  --transfers=32 \
+  --checkers=16 \
+  --buffer-size=256M \
+  --drive-chunk-size=256M \
+  --no-checksum \
+  --fast-list
+
+
+
+
+# More tips: Check Your RunPod CPU Cores First: nproc
+	   
+	     Set --transfers to 2-4x your CPU core count for best results. If you have 8 cores, use --transfers=32.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
